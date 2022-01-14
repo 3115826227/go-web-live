@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <title>主页</title>
+</head>
+<body style="margin:0;">
+<div id="app">
+    <div id="header" style="background-color: #545c64;height:55px;color:#fff;">
+        <div style="margin-left: 18%;margin-right:20%;padding:14px;">
+            <el-row>
+                <el-col :span="4">
+                    <span style="font-size:20px;">直播平台</span>
+                </el-col>
+                <el-col :span="20" style="text-align: right;font-size:15px;padding-top:6px;">
+                    <div v-if="user">
+                        <span>${user.username}</span>
+                        <el-tag type="danger" size="mini" @click="logout">退出</el-tag>
+                    </div>
+                    <div v-else="">
+                        <a @click="loginDialogVisible = true">登录</a>/<a @click="registerDialogVisible = true">注册</a>
+                    </div>
+                </el-col>
+            </el-row>
+        </div>
+    </div>
+    <div id="content" style="margin-left:18%;margin-right:20%;margin-top:3%;">
+        <div v-if="active_index === '1'">
+            <div id="search" style="margin-bottom: 3%;">
+                <el-row>
+                    <el-col :span="12" style="padding-right:2%;">
+                        <el-input placeholder="请输入账号名"></el-input>
+                    </el-col>
+                    <el-col :span="2">
+                        <el-button type="primary">查询</el-button>
+                    </el-col>
+                    <el-col :span="10" v-if="user" style="text-align:right;">
+                        <div v-if="user.open_live_room">
+                            <el-button type="success" @click="enterOriginLiveRoom">进入我的直播间</el-button>
+                        </div>
+                        <div v-else="">
+                            <el-button type="primary" @click="openLiveRoom">开通直播间</el-button>
+                        </div>
+                    </el-col>
+                </el-row>
+            </div>
+            <el-row>
+                <el-col :span="8" v-for="(item,index) in liveRooms" :key="item.live_room_id"
+                        :style="index%3?'padding-left:2%;':''" style="padding-bottom:2%;">
+                    <el-card>
+                        <div style="height: 200px;">
+                            <div v-if="item.live_room_status === 200">
+                                <el-tag type="success">直播中</el-tag>
+                            </div>
+                            <div v-else-if="item.live_room_status === 11">
+                                <el-tag type="warning">主播已离线</el-tag>
+                            </div>
+                            <div style="text-align: center;font-size:14px;color:gray;padding-top:25%;">暂无图片</div>
+                        </div>
+                        <div style="font-size:13px;">
+                            <el-row>
+                                <el-col :span="18" style="line-height: 30px;">
+                                    ${item.live_room_origin.username} 的直播间
+                                    <i class="el-icon-user"><span> ${item.live_room_user_total}</span></i>
+                                </el-col>
+                                <el-col :span="6" style="text-align:right">
+                                    <el-button type="primary" size="mini" @click="enterLiveRoom(item.live_room_id)">进入
+                                    </el-button>
+                                </el-col>
+                            </el-row>
+                        </div>
+                    </el-card>
+                </el-col>
+            </el-row>
+            <div v-if="liveRooms" id="live-room-page" style="text-align: right;">
+                <el-pagination background
+                               layout="total, prev, pager, next"
+                               :total="live_room_total">
+                </el-pagination>
+            </div>
+        </div>
+        <div v-else="active_index === '2'">
+            <div>
+                <el-row>
+                    <el-col :span="4">
+                        <el-button type="primary" @click="leaveLiveRoom">返回主页</el-button>
+                    </el-col>
+                    <el-col :span="4" v-if="isOriginLiveRoom">
+                        <el-button type="primary" @click="getLiveRoomUsers">查看用户列表</el-button>
+                    </el-col>
+                </el-row>
+            </div>
+            <div style="margin-top:3%;">
+                <div id="live-panel" style="float: left;width:70%;">
+                    <div v-if="remoteVideoVisible" style="background-color: black;height:450px;">
+                        <video id="remote-video" width="100%"></video>
+                    </div>
+                    <div v-else="">
+                        <video id="local-video" width="100%"></video>
+                    </div>
+                </div>
+                <div v-if="current_live_room" id="live-message" style="float: left;width:28%;margin-left:2%;">
+                    <el-card class="box-card" style="height:450px;">
+                        <div slot="header" class="clearfix">
+                            <span style="font-size:14px;">${current_live_room.live_room_origin.username} 的直播间</span>
+                            <span style="color: gray;font-size: 13px;"><i class="el-icon-user"><span> ${current_live_room.live_room_user_total}</span></i></span>
+                        </div>
+                        <div style="height:325px;overflow: auto;margin-bottom: 3%;">
+                            <div id="messages" v-if="messages.length">
+                                <div v-for="(item, index) in messages" :key="item.id"
+                                     :style="!index?'':'padding-top:4%;'" style="font-size:13px;">
+                                    <span style="color:gray">${item.send.username}</span>: ${item.content}
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <el-row>
+                                <el-col :span="19" style="padding-right:2%;">
+                                    <el-input size="mini" v-model="message"></el-input>
+                                </el-col>
+                                <el-col :span="4">
+                                    <el-button type="primary" size="mini" @click="sendMessage">发送</el-button>
+                                </el-col>
+                            </el-row>
+                        </div>
+                    </el-card>
+                </div>
+            </div>
+        </div>
+    </div>
+    <el-dialog title="注册" :visible.sync="registerDialogVisible" width="35%">
+        <el-form :form="register_form" label-width="80px">
+            <el-form-item label="用户名:">
+                <el-input v-model="register_form.username"></el-input>
+            </el-form-item>
+            <el-form-item label="登录账号:">
+                <el-input v-model="register_form.login_name"></el-input>
+            </el-form-item>
+            <el-form-item label="登录密码:">
+                <el-input type="password" v-model="register_form.password"></el-input>
+            </el-form-item>
+        </el-form>
+        <div style="text-align:center;">
+            <el-button type="primary" @click="register">注册</el-button>
+        </div>
+    </el-dialog>
+    <el-dialog title="登录" :visible.sync="loginDialogVisible" width="35%">
+        <el-form :form="login_form" label-width="80px">
+            <el-form-item label="登录账号:">
+                <el-input v-model="login_form.login_name"></el-input>
+            </el-form-item>
+            <el-form-item label="登录密码:">
+                <el-input type="password" v-model="login_form.password"></el-input>
+            </el-form-item>
+        </el-form>
+        <div style="text-align:center;">
+            <el-button type="primary" @click="login">登录</el-button>
+        </div>
+    </el-dialog>
+    <el-drawer
+            title="用户列表"
+            :visible.sync="userDrawer"
+            direction="rtl">
+        <el-card v-for="item in users" style="padding-left:2%;font-size:13px;">
+            <span>${item.username}</span>
+        </el-card>
+    </el-drawer>
+</div>
+</body>
+<script src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<!-- import JavaScript -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script>
+    var app = new Vue({
+        el: '#app',
+        delimiters: ['${', '}'],
+        data: function () {
+            return {
+                registerDialogVisible: false,
+                register_form: {},
+                loginDialogVisible: false,
+                login_form: {},
+                liveRooms: [],
+                live_room_total: 0,
+                current_live_room_page: 1,
+                current_live_room_page_size: 20,
+                token: '',
+                user: null,
+                web_init: false,
+                active_index: '1',
+                remoteVideoVisible: true,
+                current_live_room: {},
+                current_live_room_id: '',
+                messages: [],
+                users: [],
+                userDrawer: false,
+                isOriginLiveRoom: false,
+                message: '',
+                liveRoomTimer: null
+            }
+        },
+        mounted() {
+            this.init();
+            this.getLiveRooms();
+        },
+        methods: {
+            init() {
+                let active_index = localStorage.getItem("active_index");
+                if (active_index == null) {
+                    active_index = "1"
+                }
+                this.active_index = active_index;
+                this.current_live_room_id = localStorage.getItem("current_live_room_id");
+                let token = localStorage.getItem("token");
+                this.getDetail(token);
+                if (this.active_index === '2') {
+                    if (token) {
+                        this.getUserLiveRoomDetail(this.current_live_room_id);
+                    } else {
+                        this.getVisitorLiveRoomDetail(this.current_live_room_id);
+                    }
+                    this.openLiveRoomTimer();
+                }
+            },
+            timeInternal() {
+                if (this.isOriginLiveRoom) {
+                    this.getOriginLiveRoomDetail()
+                } else {
+                    if (localStorage.getItem("token")) {
+                        this.getUserLiveRoomDetail(this.current_live_room_id)
+                    } else {
+                        this.getVisitorLiveRoomDetail(this.current_live_room_id)
+                    }
+                }
+            },
+            openLiveRoomTimer() {
+                this.liveRoomTimer = setInterval(this.timeInternal, 2000);
+            },
+            closeLiveRoomTimer() {
+                clearInterval(this.liveRoomTimer);
+            },
+            register() {
+                let that = this;
+                $.ajax({
+                    url: "/api/v1/user/register",
+                    type: "post",
+                    data: that.register_form,
+                    error: function (e) {
+                        that.$message.error("请求错误");
+                    },
+                    success: function (data) {
+                        that.registerDialogVisible = false;
+                        that.$message.success("注册成功");
+                    }
+                })
+            },
+            login() {
+                let that = this;
+                if (this.active_index === '2') {
+                    this.liveRoomUserOpt(this.current_live_room_id, 2, true);
+                }
+                $.ajax({
+                    url: "/api/v1/user/login",
+                    type: "post",
+                    data: that.login_form,
+                    async: false,
+                    error: function (e) {
+                        console.log(e);
+                        that.$message.error("请求错误");
+                    },
+                    success: function (data) {
+                        localStorage.setItem("token", data.data.token);
+                        that.user = {
+                            account_id: data.data.user_info.account_id,
+                            username: data.data.user_info.username,
+                        };
+                        that.loginDialogVisible = false;
+                        that.$message.success("登录成功");
+                    }
+                });
+                if (this.active_index === '2') {
+                    this.enterLiveRoom(this.current_live_room_id)
+                }
+            },
+            getDetail(token) {
+                let that = this;
+                if (token) {
+                    $.ajax({
+                        url: "/api/v1/user/detail",
+                        type: "get",
+                        headers: {
+                            "token": localStorage.getItem("token"),
+                        },
+                        async: false,
+                        error: function (e) {
+                            console.log(e)
+                        },
+                        success: function (response) {
+                            if (response.code === 0) {
+                                that.user = response.data
+                            }
+                        }
+                    });
+                }
+            },
+            logout() {
+                let that = this;
+                if (this.active_index === '2') {
+                    this.liveRoomUserOpt(this.current_live_room_id, 2, false);
+                }
+                $.ajax({
+                    url: "/api/v1/user/logout",
+                    type: "get",
+                    async: false,
+                    headers: {
+                        "token": localStorage.getItem("token"),
+                    },
+                    error: function (e) {
+                        console.log(e)
+                    },
+                    success: function (response) {
+                        that.user = null;
+                        localStorage.setItem("token", '')
+                    }
+                });
+                if (this.active_index === '2') {
+                    this.enterLiveRoom(this.current_live_room_id);
+                }
+            },
+            getLiveRooms() {
+                let that = this;
+                $.ajax({
+                    url: "/api/v1/live/live_rooms",
+                    type: "get",
+                    dataType: "json",
+                    async: false,
+                    error: function (e) {
+                        console.log(e)
+                    },
+                    success: function (response) {
+                        that.liveRooms = response.data.list;
+                        that.live_room_total = response.data.total;
+                    }
+                });
+            },
+            openLiveRoom() {
+                let that = this;
+                $.ajax({
+                    url: "/api/v1/live/live_room/open",
+                    type: "post",
+                    async: false,
+                    headers: {
+                        "token": localStorage.getItem("token"),
+                    },
+                    error: function (e) {
+                        console.log(e)
+                    },
+                    success: function (response) {
+                        if (response.code === 0) {
+                            that.$message.success('开通成功');
+                            that.getDetail(localStorage.getItem("token"));
+                            that.getLiveRooms();
+                        } else {
+                            that.$message.error(response.message);
+                        }
+                    }
+                });
+            },
+            enterOriginLiveRoom() {
+                this.active_index = '2';
+                localStorage.setItem("active_index", this.active_index);
+                this.getOriginLiveRoomDetail();
+                this.openLiveRoomTimer();
+            },
+            enterLiveRoom(id) {
+                this.active_index = '2';
+                localStorage.setItem("active_index", this.active_index);
+                if (localStorage.getItem("token")) {
+                    this.liveRoomUserOpt(id, 1, false);
+                    this.getUserLiveRoomDetail(id)
+                } else {
+                    this.liveRoomUserOpt(id, 1, true);
+                    this.getVisitorLiveRoomDetail(id)
+                }
+                this.openLiveRoomTimer()
+            },
+            leaveLiveRoom() {
+                let id = localStorage.getItem("current_live_room_id");
+                this.active_index = '1';
+                localStorage.setItem("active_index", this.active_index);
+                if (localStorage.getItem("token")) {
+                    this.liveRoomUserOpt(id, 2, false);
+                } else {
+                    this.liveRoomUserOpt(id, 2, true);
+                }
+                this.getLiveRooms();
+                this.closeLiveRoomTimer();
+                this.isOriginLiveRoom = false;
+            },
+            liveRoomUserOpt(id, opt, visitor) {
+                let url = "/api/v1";
+                if (visitor) {
+                    url = url + '/visitor/opt'
+                } else {
+                    url = url + '/user/opt'
+                }
+                $.ajax({
+                    url: url,
+                    type: "post",
+                    async: false,
+                    data: {
+                        biz_id: id,
+                        biz_type: 1,
+                        live_user_operator: opt,
+                    },
+                    headers: {
+                        "token": localStorage.getItem("token"),
+                    },
+                    error: function (e) {
+                        console.log(e)
+                    },
+                    success: function (response) {
+                    }
+                });
+            },
+            getLiveRoomDetail(url) {
+                let that = this;
+                $.ajax({
+                    url: url,
+                    type: "get",
+                    async: false,
+                    headers: {
+                        "token": localStorage.getItem("token"),
+                    },
+                    error: function (e) {
+                        console.log(e)
+                    },
+                    success: function (response) {
+                        if (response.code !== 0) {
+                            that.leaveLiveRoom();
+                            return
+                        }
+                        that.current_live_room = response.data;
+                        that.current_live_room_id = that.current_live_room.live_room_id;
+                        localStorage.setItem("current_live_room_id", that.current_live_room_id);
+                    }
+                });
+            },
+            getOriginLiveRoomDetail() {
+                this.isOriginLiveRoom = true;
+                this.getLiveRoomDetail("/api/v1/live/live_room");
+                this.getOriginMessages();
+            },
+            getUserLiveRoomDetail(id) {
+                this.getLiveRoomDetail("/api/v1/live/live_room/detail/user?live_room_id=" + id);
+                if (this.user.account_id === this.current_live_room.live_room_origin.account_id) {
+                    this.isOriginLiveRoom = true;
+                    this.getOriginLiveRoomDetail();
+                    this.getOriginMessages();
+                } else {
+                    this.getUserMessages(this.current_live_room_id);
+                }
+            },
+            getVisitorLiveRoomDetail(id) {
+                this.getLiveRoomDetail("/api/v1/live/live_room/detail/visitor?live_room_id=" + id);
+                this.getVisitorMessages(this.current_live_room_id);
+            },
+            getMessages(url) {
+                let that = this;
+                $.ajax({
+                    url: url,
+                    type: "get",
+                    dataType: "json",
+                    async: false,
+                    headers: {
+                        "token": localStorage.getItem("token"),
+                    },
+                    error: function (e) {
+                        console.log(e)
+                    },
+                    success: function (response) {
+                        if (response.code !== 0) {
+                            that.leaveLiveRoom();
+                            return
+                        }
+                        that.messages = response.data.list;
+                    }
+                });
+            },
+            getVisitorMessages(id) {
+                this.getMessages("/api/v1/messages/visitor?biz_id=" + id + '&biz_type=1' + '&page_size=20');
+            },
+            getUserMessages(id) {
+                this.getMessages("/api/v1/messages/user?biz_id=" + id + '&biz_type=1' + '&page_size=20');
+            },
+            getOriginMessages() {
+                this.getMessages("/api/v1/live/live_room/messages/origin?page_size=20");
+            },
+            liveRoomOriginOpt(opt) {
+                let that = this;
+                $.ajax({
+                    url: "/api/v1/live/live_room/origin/opt",
+                    type: "post",
+                    async: false,
+                    data: {
+                        live_operator: opt,
+                    },
+                    headers: {
+                        "token": localStorage.getItem("token"),
+                    },
+                    error: function (e) {
+                        console.log(e)
+                    },
+                    success: function (response) {
+                        if (response.code !== 0) {
+                            that.$message.error(response.msg);
+                        }
+                    }
+                });
+            },
+            liveRoomOptUser(accountId, opt) {
+                let that = this;
+                $.ajax({
+                    url: "/api/v1/live/live_room/opt/user",
+                    type: "post",
+                    async: false,
+                    data: {
+                        account_id: accountId,
+                        live_origin_operator: opt,
+                    },
+                    headers: {
+                        "token": localStorage.getItem("token"),
+                    },
+                    error: function (e) {
+                        console.log(e)
+                    },
+                    success: function (response) {
+                        if (response.code !== 0) {
+                            that.$message.error(response.msg);
+                        }
+                    }
+                });
+            },
+            getLiveRoomUsers() {
+                let that = this;
+                $.ajax({
+                    url: "/api/v1/live/live_room/users",
+                    type: "get",
+                    async: false,
+                    headers: {
+                        "token": localStorage.getItem("token"),
+                    },
+                    error: function (e) {
+                        console.log(e)
+                    },
+                    success: function (response) {
+                        if (response.code !== 0) {
+                            that.$message.error(response.msg);
+                            return
+                        }
+                        that.users = response.data.list;
+                        that.userDrawer = true;
+                    }
+                });
+            },
+            sendMessage() {
+                var that = this;
+                $.ajax({
+                    url: "/api/v1/live/live_room/message",
+                    type: "post",
+                    data: {
+                        live_room_id: that.current_live_room_id,
+                        message_type: 0,
+                        content: that.message,
+                    },
+                    async: false,
+                    headers: {
+                        "token": localStorage.getItem("token"),
+                    },
+                    error: function (e) {
+                        console.log(e)
+                    },
+                    success: function (response) {
+                        if (response.code !== 0) {
+                            that.$message.error(response.message);
+                        } else {
+                            if (that.isOriginLiveRoom) {
+                                that.getOriginMessages(that.current_live_room_id);
+                            } else {
+                                that.getUserMessages(that.current_live_room_id);
+                            }
+                        }
+                        that.message = ''
+                    }
+                });
+            }
+        }
+    })
+</script>
+</html>
