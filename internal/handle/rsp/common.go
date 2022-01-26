@@ -1,9 +1,11 @@
 package rsp
 
+import "github.com/3115826227/go-web-live/internal/errors"
+
 type CommonResp struct {
-	Code    int         `json:"code"`
-	Message string      `json:"message"`
-	Data    interface{} `json:"data"`
+	Code    errors.ErrorCode `json:"code"`
+	Message string           `json:"message"`
+	Data    interface{}      `json:"data"`
 }
 
 type CommonListResp struct {

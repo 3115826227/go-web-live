@@ -2,61 +2,31 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f4e90a85-9af9-44ac-80bc-b89abfeaa3f9" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/cmd/main.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmd/res/config.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/application/live.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/application/message.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/application/session.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/application/user.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/cache/client.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/cache/infrastructure/localcache/localcache.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/cache/interfaces/cache.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/config/config.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/constant/constant.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/db/infrastructure/dbclient/client.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/db/infrastructure/dbclient/live.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/db/infrastructure/dbclient/message.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/db/infrastructure/dbclient/session.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/db/infrastructure/dbclient/user.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/db/infrastructure/gormclient/sqlite.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/db/interfaces/gorm.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/db/interfaces/interface.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/db/tables/common.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/db/tables/live.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/db/tables/message.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/db/tables/session.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/db/tables/user.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/dtos/live.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/dtos/message.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/dtos/session.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/dtos/user.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/handle/code.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/handle/live.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/handle/live_message.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/handle/page.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/handle/requests/live.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/handle/requests/message.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/handle/requests/page.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/handle/requests/user.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/handle/rsp/common.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/handle/rsp/live.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/handle/rsp/message.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/handle/rsp/user.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/handle/session.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/handle/session_message.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/handle/user.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/handle/usermeta.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/log/log.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/log/log_test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/main.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/middleware/token.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/middleware/visitor.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/route.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/utils/utils.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/utils/utils_test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/views/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/errors/code.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/errors/en.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/errors/error.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/errors/zh.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/application/live.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/application/live.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/application/message.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/application/message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/application/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/application/user.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/cache/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/cache/client.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/cache/interfaces/cache.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/cache/interfaces/cache.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/constant/constant.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/constant/constant.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/db/infrastructure/dbclient/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/db/infrastructure/dbclient/client.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/db/infrastructure/dbclient/live.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/db/infrastructure/dbclient/live.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/db/infrastructure/dbclient/message.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/db/infrastructure/dbclient/message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/db/infrastructure/dbclient/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/db/infrastructure/dbclient/user.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/db/interfaces/interface.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/db/interfaces/interface.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/handle/code.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/handle/code.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/handle/live.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/handle/live.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/handle/live_message.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/handle/live_message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/handle/page.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/handle/page.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/handle/rsp/common.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/handle/rsp/common.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/handle/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/handle/user.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/middleware/token.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/middleware/token.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/middleware/visitor.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/middleware/visitor.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -139,8 +109,8 @@
     </configuration>
     <list>
       <item itemvalue="Go Build.go build github.com/3115826227/go-web-live/cmd" />
-      <item itemvalue="Go Test.TestGenerateSerialNumber in github.com/3115826227/go-web-live/internal/utils" />
       <item itemvalue="Go Test.TestInitLogger in github.com/3115826227/go-web-live/internal/log" />
+      <item itemvalue="Go Test.TestGenerateSerialNumber in github.com/3115826227/go-web-live/internal/utils" />
     </list>
     <recent_temporary>
       <list>
@@ -166,36 +136,40 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="184" y="112" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1440.900/-1920.-106.1920.1080@0.0.1440.900" timestamp="1639645017471" />
-    <state width="1398" height="452" key="GridCell.Tab.0.bottom" timestamp="1641806346227">
+    <state x="303" y="44" key="CommitChangelistDialog2" timestamp="1642148135053">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="452" key="GridCell.Tab.0.bottom/0.0.1440.900/-1920.-106.1920.1080@0.0.1440.900" timestamp="1641806346227" />
+    <state x="303" y="44" key="CommitChangelistDialog2/0.0.1440.900/-1920.-106.1920.1080@0.0.1440.900" timestamp="1642148135053" />
+    <state width="1398" height="452" key="GridCell.Tab.0.bottom" timestamp="1643183794409">
+      <screen x="0" y="23" width="1440" height="804" />
+    </state>
+    <state width="1398" height="452" key="GridCell.Tab.0.bottom/0.0.1440.900/-1920.-106.1920.1080@0.0.1440.900" timestamp="1642576397220" />
     <state width="1398" height="452" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1640278851905" />
-    <state width="1398" height="435" key="GridCell.Tab.0.bottom/0.23.1440.804/-1920.-83.1920.1057@0.23.1440.804" timestamp="1639990403226" />
+    <state width="1398" height="452" key="GridCell.Tab.0.bottom/0.23.1440.804/-1920.-83.1920.1057@0.23.1440.804" timestamp="1643183794409" />
     <state width="1398" height="396" key="GridCell.Tab.0.bottom/0.23.1440.804@0.23.1440.804" timestamp="1639739962036" />
     <state width="1398" height="452" key="GridCell.Tab.0.bottom/0.23.1440.806/-1920.-83.1920.1057@0.23.1440.806" timestamp="1641364421705" />
-    <state width="1398" height="452" key="GridCell.Tab.0.center" timestamp="1641806346224">
-      <screen x="0" y="0" width="1440" height="900" />
+    <state width="1398" height="452" key="GridCell.Tab.0.center" timestamp="1643183794408">
+      <screen x="0" y="23" width="1440" height="804" />
     </state>
-    <state width="1398" height="452" key="GridCell.Tab.0.center/0.0.1440.900/-1920.-106.1920.1080@0.0.1440.900" timestamp="1641806346224" />
+    <state width="1398" height="452" key="GridCell.Tab.0.center/0.0.1440.900/-1920.-106.1920.1080@0.0.1440.900" timestamp="1642576397217" />
     <state width="1398" height="452" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1640278851903" />
-    <state width="1398" height="435" key="GridCell.Tab.0.center/0.23.1440.804/-1920.-83.1920.1057@0.23.1440.804" timestamp="1639990403218" />
+    <state width="1398" height="452" key="GridCell.Tab.0.center/0.23.1440.804/-1920.-83.1920.1057@0.23.1440.804" timestamp="1643183794408" />
     <state width="1398" height="396" key="GridCell.Tab.0.center/0.23.1440.804@0.23.1440.804" timestamp="1639739962034" />
     <state width="1398" height="452" key="GridCell.Tab.0.center/0.23.1440.806/-1920.-83.1920.1057@0.23.1440.806" timestamp="1641364421702" />
-    <state width="1398" height="452" key="GridCell.Tab.0.left" timestamp="1641806346222">
-      <screen x="0" y="0" width="1440" height="900" />
+    <state width="1398" height="452" key="GridCell.Tab.0.left" timestamp="1643183794407">
+      <screen x="0" y="23" width="1440" height="804" />
     </state>
-    <state width="1398" height="452" key="GridCell.Tab.0.left/0.0.1440.900/-1920.-106.1920.1080@0.0.1440.900" timestamp="1641806346222" />
+    <state width="1398" height="452" key="GridCell.Tab.0.left/0.0.1440.900/-1920.-106.1920.1080@0.0.1440.900" timestamp="1642576397216" />
     <state width="1398" height="452" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1640278851901" />
-    <state width="1398" height="435" key="GridCell.Tab.0.left/0.23.1440.804/-1920.-83.1920.1057@0.23.1440.804" timestamp="1639990403215" />
+    <state width="1398" height="452" key="GridCell.Tab.0.left/0.23.1440.804/-1920.-83.1920.1057@0.23.1440.804" timestamp="1643183794407" />
     <state width="1398" height="396" key="GridCell.Tab.0.left/0.23.1440.804@0.23.1440.804" timestamp="1639739962033" />
     <state width="1398" height="452" key="GridCell.Tab.0.left/0.23.1440.806/-1920.-83.1920.1057@0.23.1440.806" timestamp="1641364421700" />
-    <state width="1398" height="452" key="GridCell.Tab.0.right" timestamp="1641806346225">
-      <screen x="0" y="0" width="1440" height="900" />
+    <state width="1398" height="452" key="GridCell.Tab.0.right" timestamp="1643183794408">
+      <screen x="0" y="23" width="1440" height="804" />
     </state>
-    <state width="1398" height="452" key="GridCell.Tab.0.right/0.0.1440.900/-1920.-106.1920.1080@0.0.1440.900" timestamp="1641806346225" />
+    <state width="1398" height="452" key="GridCell.Tab.0.right/0.0.1440.900/-1920.-106.1920.1080@0.0.1440.900" timestamp="1642576397219" />
     <state width="1398" height="452" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1640278851905" />
-    <state width="1398" height="435" key="GridCell.Tab.0.right/0.23.1440.804/-1920.-83.1920.1057@0.23.1440.804" timestamp="1639990403220" />
+    <state width="1398" height="452" key="GridCell.Tab.0.right/0.23.1440.804/-1920.-83.1920.1057@0.23.1440.804" timestamp="1643183794408" />
     <state width="1398" height="396" key="GridCell.Tab.0.right/0.23.1440.804@0.23.1440.804" timestamp="1639739962035" />
     <state width="1398" height="452" key="GridCell.Tab.0.right/0.23.1440.806/-1920.-83.1920.1057@0.23.1440.806" timestamp="1641364421704" />
     <state x="221" y="89" key="SettingsEditor" timestamp="1639643949265">

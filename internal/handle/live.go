@@ -5,6 +5,7 @@ import (
 	"github.com/3115826227/go-web-live/internal/application"
 	"github.com/3115826227/go-web-live/internal/constant"
 	"github.com/3115826227/go-web-live/internal/dtos"
+	"github.com/3115826227/go-web-live/internal/errors"
 	"github.com/3115826227/go-web-live/internal/handle/requests"
 	"github.com/3115826227/go-web-live/internal/handle/rsp"
 	"github.com/3115826227/go-web-live/internal/log"
@@ -18,13 +19,13 @@ func LiveOriginHandle(c *gin.Context) {
 	detail, exist, err := application.GetLiveRoomByAccountId(c, userMeta.AccountId)
 	if err != nil {
 		log.Logger.Error(err.Error())
-		FailedResp(c, CodeInternalError)
+		FailedResp(c, err.Code())
 		return
 	}
 	if !exist {
-		err = fmt.Errorf("user %v didn't open live room", userMeta.AccountId)
-		log.Logger.Error(err.Error())
-		FailedResp(c, CodeUnOpenLiveRoomError)
+		err1 := fmt.Errorf("user %v didn't open live room", userMeta.AccountId)
+		log.Logger.Error(err1.Error())
+		FailedResp(c, errors.CodeUnOpenLiveRoomError)
 		return
 	}
 	var user dtos.User
@@ -58,14 +59,14 @@ func OpenLiveHandle(c *gin.Context) {
 		return
 	}
 	if exist {
-		err = fmt.Errorf("user %v had open live room", userMeta.AccountId)
-		log.Logger.Errorf(err.Error())
+		err1 := fmt.Errorf("user %v had open live room", userMeta.AccountId)
+		log.Logger.Errorf(err1.Error())
 		FailedResp(c, CodeOpenLiveRoomExistError)
 		return
 	}
 	if err = application.OpenLiveRoom(c, userMeta.AccountId); err != nil {
 		log.Logger.Error(err.Error())
-		FailedResp(c, CodeInternalError)
+		FailedResp(c, err.Code())
 		return
 	}
 	SuccessResp(c, "", nil)
@@ -82,23 +83,24 @@ func LiveHandle(c *gin.Context) {
 	reqPage, err := PageHandle(c)
 	if err != nil {
 		log.Logger.Error(err.Error())
-		FailedResp(c, CodeInternalError)
+		FailedResp(c, err.Code())
 		return
 	}
 	lives, total, err := application.QueryLive(c, reqPage, accountId)
 	if err != nil {
 		log.Logger.Error(err.Error())
-		FailedResp(c, CodeInternalError)
+		FailedResp(c, err.Code())
 		return
 	}
 	var accountIds = make([]string, 0)
 	for _, live := range lives {
 		accountIds = append(accountIds, live.LiveRoomOrigin)
 	}
-	userMap, err := application.GetUserByIds(c, accountIds)
+	var userMap map[string]dtos.User
+	userMap, err = application.GetUserByIds(c, accountIds)
 	if err != nil {
 		log.Logger.Error(err.Error())
-		FailedResp(c, CodeInternalError)
+		FailedResp(c, err.Code())
 		return
 	}
 	var list = make([]interface{}, 0)
@@ -238,16 +240,10 @@ func LiveDetailUserQueryHandle(c *gin.Context) {
 // 直播间用户列表查询（仅主播可见）
 func LiveUserHandle(c *gin.Context) {
 	userMeta := GetUserMeta(c)
-	id, exist, err := application.GetLiveRoomIdByAccountId(c, userMeta.AccountId)
+	id, _, err := application.GetLiveRoomIdByAccountId(c, userMeta.AccountId)
 	if err != nil {
 		log.Logger.Error(err.Error())
-		FailedResp(c, CodeInternalError)
-		return
-	}
-	if !exist {
-		err = fmt.Errorf("user %v hadn't open live room", userMeta.AccountId)
-		log.Logger.Error(err.Error())
-		FailedResp(c, CodeUnOpenLiveRoomError)
+		FailedResp(c, err.Code())
 		return
 	}
 	var reqPage requests.PageCommonReq
@@ -285,23 +281,22 @@ func LiveOriginOperatorHandle(c *gin.Context) {
 		return
 	}
 	if !exist {
-		err = fmt.Errorf("user %v hadn't open live room", userMeta.AccountId)
-		log.Logger.Error(err.Error())
+		err1 := fmt.Errorf("user %v hadn't open live room", userMeta.AccountId)
+		log.Logger.Error(err1.Error())
 		FailedResp(c, CodeUnOpenLiveRoomError)
 		return
 	}
-	var opt int
-	opt, err = strconv.Atoi(c.PostForm("live_operator"))
-	if err != nil {
-		log.Logger.Error(err.Error())
-		FailedResp(c, CodeInvalidParams)
+	opt, err1 := strconv.Atoi(c.PostForm("live_operator"))
+	if err1 != nil {
+		log.Logger.Error(err1.Error())
+		FailedResp(c, errors.CodeInternalError)
 		return
 	}
 	var req requests.LiveOperatorReq
 	req.LiveOperator = constant.LiveOperator(opt)
-	if err = c.Bind(&req); err != nil {
-		log.Logger.Error(err.Error())
-		FailedResp(c, CodeInvalidParams)
+	if err1 = c.Bind(&req); err1 != nil {
+		log.Logger.Error(err1.Error())
+		FailedResp(c, errors.CodeInvalidParamError)
 		return
 	}
 	switch req.LiveOperator {

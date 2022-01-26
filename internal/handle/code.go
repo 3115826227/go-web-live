@@ -1,6 +1,7 @@
 package handle
 
 import (
+	"github.com/3115826227/go-web-live/internal/errors"
 	"github.com/3115826227/go-web-live/internal/handle/rsp"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -103,21 +104,21 @@ const (
 )
 
 var ErrCodeM = map[int]string{
-	ErrCodeLoginInvalid:        ErrCodeLoginInvalidMsg,
-	CodeInvalidParams:          CodeInvalidParamsMsg,
-	CodeInternalError:          CodeInternalErrorMsg,
-	CodeRequiredForbidden:      CodeRequiredForbiddenMsg,
-	CodePhoneInvalid:           CodePhoneInvalidMsg,
-	CodePhoneEmpty:             CodePhoneEmptyMsg,
-	CodePhoneVerifyCodeTooBusy: CodePhoneVerifyCodeTooBusyMsg,
-	CodePhoneVerifyCodeError:   CodePhoneVerifyCodeErrorMsg,
-	CodePhoneVerifyCodeInvalid: CodePhoneVerifyCodeInvalidMsg,
-	CodePhoneVerifyCodeExpire:  CodePhoneVerifyCodeExpireMsg,
-	CodePhoneVerifyCodeEmpty:   CodePhoneVerifyCodeEmptyMsg,
-	CodeSelfVideoConflictError: CodeSelfVideoConflictErrorMsg,
-	CodeUserVideoConflictError: CodeUserVideoConflictErrorMsg,
-	CodeUserOfflineError:       CodeUserOfflineErrorMsg,
-	CodeLoginNameExistError: CodeLoginNameExistErrorMsg,
+	ErrCodeLoginInvalid:                    ErrCodeLoginInvalidMsg,
+	CodeInvalidParams:                      CodeInvalidParamsMsg,
+	CodeInternalError:                      CodeInternalErrorMsg,
+	CodeRequiredForbidden:                  CodeRequiredForbiddenMsg,
+	CodePhoneInvalid:                       CodePhoneInvalidMsg,
+	CodePhoneEmpty:                         CodePhoneEmptyMsg,
+	CodePhoneVerifyCodeTooBusy:             CodePhoneVerifyCodeTooBusyMsg,
+	CodePhoneVerifyCodeError:               CodePhoneVerifyCodeErrorMsg,
+	CodePhoneVerifyCodeInvalid:             CodePhoneVerifyCodeInvalidMsg,
+	CodePhoneVerifyCodeExpire:              CodePhoneVerifyCodeExpireMsg,
+	CodePhoneVerifyCodeEmpty:               CodePhoneVerifyCodeEmptyMsg,
+	CodeSelfVideoConflictError:             CodeSelfVideoConflictErrorMsg,
+	CodeUserVideoConflictError:             CodeUserVideoConflictErrorMsg,
+	CodeUserOfflineError:                   CodeUserOfflineErrorMsg,
+	CodeLoginNameExistError:                CodeLoginNameExistErrorMsg,
 	CodeUnOpenLiveRoomError:                CodeUnOpenLiveRoomErrorMsg,
 	CodeOpenLiveRoomExistError:             CodeOpenLiveRoomExistErrorMsg,
 	CodeLiveRoomIdEmptyError:               CodeLiveRoomIdEmptyErrorMsg,
@@ -147,6 +148,6 @@ func SuccessListResp(c *gin.Context, message string, list []interface{}, total, 
 	}})
 }
 
-func FailedResp(c *gin.Context, code int) {
-	c.JSON(http.StatusOK, rsp.CommonResp{Code: code, Message: ErrCodeM[code], Data: make(map[string]interface{})})
+func FailedResp(c *gin.Context, ec errors.ErrorCode) {
+	c.JSON(http.StatusOK, rsp.CommonResp{Code: ec, Message: errors.GetZhErrorMsg(ec), Data: make(map[string]interface{})})
 }

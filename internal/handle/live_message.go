@@ -5,6 +5,7 @@ import (
 	"github.com/3115826227/go-web-live/internal/application"
 	"github.com/3115826227/go-web-live/internal/constant"
 	"github.com/3115826227/go-web-live/internal/dtos"
+	"github.com/3115826227/go-web-live/internal/errors"
 	"github.com/3115826227/go-web-live/internal/handle/requests"
 	"github.com/3115826227/go-web-live/internal/handle/rsp"
 	"github.com/3115826227/go-web-live/internal/log"
@@ -19,24 +20,28 @@ func LiveMessageOriginQueryHandle(c *gin.Context) {
 	id, exist, err := application.GetLiveRoomIdByAccountId(c, userMeta.AccountId)
 	if err != nil {
 		log.Logger.Error(err.Error())
-		FailedResp(c, CodeInternalError)
+		FailedResp(c, err.Code())
 		return
 	}
 	if !exist {
-		err = fmt.Errorf("user %v hadn't open live room", userMeta.AccountId)
-		log.Logger.Error(err.Error())
-		FailedResp(c, CodeUnOpenLiveRoomError)
+		err1 := fmt.Errorf("user %v hadn't open live room", userMeta.AccountId)
+		log.Logger.Error(err1.Error())
+		FailedResp(c, errors.CodeUnOpenLiveRoomError)
 		return
 	}
 	var reqPage requests.PageCommonReq
 	reqPage, err = PageHandle(c)
 	if err != nil {
 		log.Logger.Error(err.Error())
-		FailedResp(c, CodeInternalError)
+		FailedResp(c, err.Code())
 		return
 	}
 	var messages []dtos.Message
-	messages, err = application.OriginGetMessages(c, reqPage, id, constant.LiveRoomBizType)
+	if messages, err = application.OriginGetMessages(c, reqPage, id, constant.LiveRoomBizType); err != nil {
+		log.Logger.Error(err.Error())
+		FailedResp(c, err.Code())
+		return
+	}
 	var ids = make([]string, 0)
 	for _, msg := range messages {
 		ids = append(ids, msg.Send)
@@ -45,7 +50,7 @@ func LiveMessageOriginQueryHandle(c *gin.Context) {
 	mp, err = application.GetUserByIds(c, ids)
 	if err != nil {
 		log.Logger.Error(err.Error())
-		FailedResp(c, CodeInternalError)
+		FailedResp(c, err.Code())
 		return
 	}
 	var list = make([]interface{}, 0)
@@ -74,7 +79,7 @@ func MessageVisitorQueryHandle(c *gin.Context) {
 	bizType, err := strconv.Atoi(c.Query("biz_type"))
 	if err != nil {
 		log.Logger.Error(err.Error())
-		FailedResp(c, CodeInvalidParams)
+		FailedResp(c, errors.CodeInvalidParamError)
 		return
 	}
 	var exist bool
@@ -89,7 +94,7 @@ func MessageVisitorQueryHandle(c *gin.Context) {
 		if !exist {
 			err = fmt.Errorf("live room id %v isn't exist", bizId)
 			log.Logger.Errorf(err.Error())
-			FailedResp(c, CodeLiveRoomIdNotExistError)
+			FailedResp(c, errors.CodeLiveRoomIdNotExistError)
 			return
 		}
 	case constant.SessionBizType:

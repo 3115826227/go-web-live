@@ -6,6 +6,7 @@ import (
 	"github.com/3115826227/go-web-live/internal/db/infrastructure/dbclient"
 	"github.com/3115826227/go-web-live/internal/db/tables"
 	"github.com/3115826227/go-web-live/internal/dtos"
+	"github.com/3115826227/go-web-live/internal/errors"
 	"github.com/3115826227/go-web-live/internal/handle/requests"
 	"gorm.io/gorm"
 	"sort"
@@ -24,7 +25,7 @@ func AddMessage(ctx context.Context, message dtos.Message, bizId string, bizType
 	return dbclient.GetDBClient().AddMessage(msg)
 }
 
-func OriginGetMessages(ctx context.Context, req requests.PageCommonReq, bizId string, bizType constant.BizType) ([]dtos.Message, error) {
+func OriginGetMessages(ctx context.Context, req requests.PageCommonReq, bizId string, bizType constant.BizType) ([]dtos.Message, errors.Error) {
 	var list = make([]dtos.Message, 0)
 	messages, err := dbclient.GetDBClient().GetMessagesByBiz(bizId, bizType, 0, req.Page, req.PageSize)
 	if err != nil {
@@ -73,7 +74,7 @@ func AddUserRelation(ctx context.Context, bizId string, bizType constant.BizType
 	return dbclient.GetDBClient().AddUserRelation(relation)
 }
 
-func QueryUserRelations(ctx context.Context, req requests.PageCommonReq, bizId string, bizType constant.BizType) ([]dtos.User, int64, error) {
+func QueryUserRelations(ctx context.Context, req requests.PageCommonReq, bizId string, bizType constant.BizType) ([]dtos.User, int64, errors.Error) {
 	relations, total, err := dbclient.GetDBClient().GetUserRelations(bizId, bizType, req.Page, req.PageSize)
 	if err != nil {
 		return nil, 0, err

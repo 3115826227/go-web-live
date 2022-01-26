@@ -25,7 +25,7 @@ func Visitor(c *gin.Context) {
 		username = fmt.Sprintf("访客%v", accountId[:5])
 		if err = application.AddVisitor(c, accountId, username, ip); err != nil {
 			log.Logger.Error(err.Error())
-			handle.FailedResp(c, handle.CodeInternalError)
+			handle.FailedResp(c, err.Code())
 			return
 		}
 	} else {

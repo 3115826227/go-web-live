@@ -2,16 +2,16 @@ package application
 
 import (
 	"context"
-	"fmt"
 	"github.com/3115826227/go-web-live/internal/db/infrastructure/dbclient"
 	"github.com/3115826227/go-web-live/internal/db/tables"
 	"github.com/3115826227/go-web-live/internal/dtos"
+	"github.com/3115826227/go-web-live/internal/errors"
 	"github.com/3115826227/go-web-live/internal/utils"
 	"gorm.io/gorm"
 	"time"
 )
 
-func UserRegister(ctx context.Context, ul dtos.UserRegister) error {
+func UserRegister(ctx context.Context, ul dtos.UserRegister) errors.Error {
 	var now = time.Now().Unix()
 	var user = tables.User{
 		AccountId: utils.GenerateSerialNumber(),
@@ -23,13 +23,13 @@ func UserRegister(ctx context.Context, ul dtos.UserRegister) error {
 	return dbclient.GetDBClient().AddUser(user)
 }
 
-func UserLogin(ctx context.Context, loginName, password string) (dtos.User, error) {
+func UserLogin(ctx context.Context, loginName, password string) (dtos.User, errors.Error) {
 	user, err := dbclient.GetDBClient().GetUserByLoginName(loginName)
 	if err != nil {
 		return dtos.User{}, err
 	}
 	if user.Password != password {
-		err = fmt.Errorf("password is invalid")
+		err = errors.NewCommonError(errors.CodePasswordFaultError)
 		return dtos.User{}, err
 	}
 	var u = dtos.User{
@@ -55,7 +55,7 @@ func GetUserByLoginName(ctx context.Context, loginName string) (dtos.User, bool,
 	return u, true, nil
 }
 
-func GetUserById(ctx context.Context, accountId string) (dtos.User, error) {
+func GetUserById(ctx context.Context, accountId string) (dtos.User, errors.Error) {
 	mp, err := dbclient.GetDBClient().GetUserByIds(accountId)
 	if err != nil {
 		return dtos.User{}, err
@@ -67,9 +67,9 @@ func GetUserById(ctx context.Context, accountId string) (dtos.User, error) {
 	return user, nil
 }
 
-func GetUserByIds(ctx context.Context, accountIds []string) (userMap map[string]dtos.User, err error) {
-	mp, err := dbclient.GetDBClient().GetUserByIds(accountIds...)
-	if err != nil {
+func GetUserByIds(ctx context.Context, accountIds []string) (userMap map[string]dtos.User, err errors.Error) {
+	var mp map[string]tables.User
+	if mp, err = dbclient.GetDBClient().GetUserByIds(accountIds...); err != nil {
 		return
 	}
 	userMap = make(map[string]dtos.User)
@@ -82,7 +82,7 @@ func GetUserByIds(ctx context.Context, accountIds []string) (userMap map[string]
 	return
 }
 
-func AddVisitor(ctx context.Context, accountId, username, ip string) error {
+func AddVisitor(ctx context.Context, accountId, username, ip string) errors.Error {
 	var now = time.Now().Unix()
 	var visitor = tables.Visitor{
 		AccountId: accountId,
@@ -93,10 +93,10 @@ func AddVisitor(ctx context.Context, accountId, username, ip string) error {
 	return dbclient.GetDBClient().AddVisitor(visitor)
 }
 
-func GetVisitorByIp(ctx context.Context, ip string) (dtos.User, bool, error) {
+func GetVisitorByIp(ctx context.Context, ip string) (dtos.User, bool, errors.Error) {
 	visitor, err := dbclient.GetDBClient().GetVisitorByIp(ip)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
+		if err.Code() == errors.CodeResourceNotExistError {
 			return dtos.User{}, false, nil
 		}
 		return dtos.User{}, false, err
@@ -109,9 +109,9 @@ func GetVisitorByIp(ctx context.Context, ip string) (dtos.User, bool, error) {
 	return u, true, nil
 }
 
-func GetVisitorByIds(ctx context.Context, accountIds []string) (userMap map[string]dtos.User, err error) {
-	mp, err := dbclient.GetDBClient().GetVisitorByIds(accountIds...)
-	if err != nil {
+func GetVisitorByIds(ctx context.Context, accountIds []string) (userMap map[string]dtos.User, err errors.Error) {
+	var mp map[string]tables.Visitor
+	if mp, err = dbclient.GetDBClient().GetVisitorByIds(accountIds...); err != nil {
 		return
 	}
 	userMap = make(map[string]dtos.User)

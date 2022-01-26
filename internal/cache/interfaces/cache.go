@@ -12,3 +12,7 @@ type Cache interface {
 	HDel(key string, fields ...string) error
 	HGetAll(key string) (map[string]string, error)
 }
+
+type CacheClient interface {
+
+}

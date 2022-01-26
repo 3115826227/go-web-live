@@ -1,12 +1,12 @@
 package handle
 
 import (
-	"fmt"
 	"github.com/3115826227/go-web-live/internal/application"
 	"github.com/3115826227/go-web-live/internal/config"
 	"github.com/3115826227/go-web-live/internal/db/infrastructure/dbclient"
 	"github.com/3115826227/go-web-live/internal/db/tables"
 	"github.com/3115826227/go-web-live/internal/dtos"
+	"github.com/3115826227/go-web-live/internal/errors"
 	"github.com/3115826227/go-web-live/internal/handle/requests"
 	"github.com/3115826227/go-web-live/internal/handle/rsp"
 	"github.com/3115826227/go-web-live/internal/log"
@@ -23,19 +23,7 @@ func UserRegister(c *gin.Context) {
 	req.Password = c.PostForm("password")
 	if err := c.Bind(&req); err != nil {
 		log.Logger.Error(err.Error())
-		FailedResp(c, CodeInvalidParams)
-		return
-	}
-	_, exist, err := application.GetUserByLoginName(c, req.LoginName)
-	if err != nil {
-		log.Logger.Error(err.Error())
-		FailedResp(c, CodeInternalError)
-		return
-	}
-	if exist {
-		err = fmt.Errorf("login name %v exist", req.LoginName)
-		log.Logger.Error(err.Error())
-		FailedResp(c, CodeLoginNameExistError)
+		FailedResp(c, errors.CodeInvalidParamError)
 		return
 	}
 	var userRegister = dtos.UserRegister{
@@ -43,9 +31,9 @@ func UserRegister(c *gin.Context) {
 		LoginName: req.LoginName,
 		Password:  req.Password,
 	}
-	if err = application.UserRegister(c, userRegister); err != nil {
+	if err := application.UserRegister(c, userRegister); err != nil {
 		log.Logger.Error(err.Error())
-		FailedResp(c, CodeInternalError)
+		FailedResp(c, err.Code())
 		return
 	}
 	SuccessResp(c, "", nil)
@@ -58,22 +46,21 @@ func UserLogin(c *gin.Context) {
 	req.Password = c.PostForm("password")
 	if err := c.Bind(&req); err != nil {
 		log.Logger.Error(err.Error())
-		FailedResp(c, CodeInvalidParams)
+		FailedResp(c, errors.CodeInvalidParamError)
 		return
 	}
 	user, err := application.UserLogin(c, req.LoginName, req.Password)
 	if err != nil {
 		log.Logger.Error(err.Error())
+		FailedResp(c, err.Code())
 		return
 	}
-
-	var token string
-	token, err = utils.GenerateToken(user.AccountId, time.Now(), config.GetConfig().TokenSecret)
-	if err != nil {
+	token, err1 := utils.GenerateToken(user.AccountId, time.Now(), config.GetConfig().TokenSecret)
+	if err1 != nil {
 		log.Logger.Error(err.Error())
+		FailedResp(c, errors.CodeInternalError)
 		return
 	}
-
 	var loginResult = rsp.LoginResult{
 		UserInfo: rsp.UserDataResp{
 			AccountId: user.AccountId,
@@ -91,7 +78,7 @@ func UserLogin(c *gin.Context) {
 			AccountId: user.AccountId,
 			Value:     userMeta.ToString(),
 		}
-		if err = dbclient.GetDBClient().AddUserToken(userToken); err != nil {
+		if err1 = dbclient.GetDBClient().AddUserToken(userToken); err != nil {
 			log.Logger.Error(err.Error())
 		}
 	}()

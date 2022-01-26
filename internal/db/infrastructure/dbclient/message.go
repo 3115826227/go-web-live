@@ -3,6 +3,7 @@ package dbclient
 import (
 	"github.com/3115826227/go-web-live/internal/constant"
 	"github.com/3115826227/go-web-live/internal/db/tables"
+	"github.com/3115826227/go-web-live/internal/errors"
 	"gorm.io/gorm"
 )
 
@@ -10,35 +11,47 @@ func addMessage(c *Client, msg tables.Message) error {
 	return c.client.CreateObject(&msg)
 }
 
-func getMessages(c *Client, bizId string, bizType constant.BizType, timestamp int64, page, pageSize int64) (messages []tables.Message, err error) {
+func getMessages(c *Client, bizId string, bizType constant.BizType, timestamp int64, page, pageSize int64) ([]tables.Message, errors.Error) {
 	var (
-		offset = int((page - 1) * pageSize)
-		limit  = int(pageSize)
+		messages []tables.Message
+		offset   = int((page - 1) * pageSize)
+		limit    = int(pageSize)
 	)
 	var template = c.client.GetDB().Model(&tables.Message{}).Where("biz_id = ? and biz_type = ? and send_timestamp > ?", bizId, bizType, timestamp)
-	err = template.Offset(offset).Limit(limit).Order("id desc").Find(&messages).Error
-	return
+	err := template.Offset(offset).Limit(limit).Order("id desc").Find(&messages).Error
+	if err != nil {
+		return nil, errors.NewCommonError(errors.CodeInternalError)
+	}
+	return messages, nil
 }
 
-func getUserRelationTotal(c *Client, bizId string, bizType constant.BizType) (total int64, err error) {
+func getUserRelationTotal(c *Client, bizId string, bizType constant.BizType) (int64, errors.Error) {
 	var template = c.client.GetDB().Model(&tables.UserRelation{}).
 		Where("biz_id = ? and biz_type = ?", bizId, bizType)
-	err = template.Count(&total).Error
-	return
+	var total int64
+	if err := template.Count(&total).Error; err != nil {
+		return 0, errors.NewCommonError(errors.CodeInternalError)
+	}
+	return total, nil
 }
 
-func getUserRelations(c *Client, bizId string, bizType constant.BizType, page, pageSize int64) (relations []tables.UserRelation, total int64, err error) {
+func getUserRelations(c *Client, bizId string, bizType constant.BizType, page, pageSize int64) ([]tables.UserRelation, int64, errors.Error) {
 	var (
-		offset = int((page - 1) * pageSize)
-		limit  = int(pageSize)
+		relations []tables.UserRelation
+		total     int64
+		err       error
+		offset    = int((page - 1) * pageSize)
+		limit     = int(pageSize)
 	)
 	var template = c.client.GetDB().Model(&tables.UserRelation{}).
 		Where("biz_id = ? and biz_type", bizId, bizType)
 	if err = template.Count(&total).Error; err != nil {
-		return
+		return nil, 0, errors.NewCommonError(errors.CodeInternalError)
 	}
-	err = template.Offset(offset).Limit(limit).Find(&relations).Order("id desc").Error
-	return
+	if err = template.Offset(offset).Limit(limit).Find(&relations).Order("id desc").Error; err != nil {
+		return nil, 0, errors.NewCommonError(errors.CodeInternalError)
+	}
+	return relations, total, nil
 }
 
 func addUserRelation(c *Client, relation tables.UserRelation) error {

@@ -3,6 +3,7 @@ package middleware
 import (
 	"encoding/json"
 	"github.com/3115826227/go-web-live/internal/db/infrastructure/dbclient"
+	"github.com/3115826227/go-web-live/internal/errors"
 	"github.com/3115826227/go-web-live/internal/handle"
 	"github.com/3115826227/go-web-live/internal/handle/rsp"
 	"github.com/gin-gonic/gin"
@@ -16,7 +17,7 @@ func CheckToken(c *gin.Context) {
 		token = c.Query(handle.HeaderToken)
 	}
 	if token == "" {
-		c.JSON(http.StatusUnauthorized, rsp.CommonResp{
+		c.JSON(http.StatusOK, rsp.CommonResp{
 			Code:    handle.CodeRequiredLogin,
 			Message: handle.CodeRequiredLoginMsg,
 			Data:    make([]interface{}, 0),
@@ -27,9 +28,9 @@ func CheckToken(c *gin.Context) {
 
 	var userToken, err = dbclient.GetDBClient().GetUserTokenByToken(token)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, rsp.CommonResp{
-			Code:    handle.CodeRequiredLogin,
-			Message: handle.CodeRequiredLoginMsg,
+		c.JSON(http.StatusOK, rsp.CommonResp{
+			Code:    err.Code(),
+			Message: err.Error(),
 			Data:    make([]interface{}, 0),
 		})
 		c.Abort()
@@ -37,11 +38,12 @@ func CheckToken(c *gin.Context) {
 	}
 	var str = userToken.Value
 	var userMeta handle.UserMeta
-	err = json.Unmarshal([]byte(str), &userMeta)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, rsp.CommonResp{
-			Code:    handle.CodeRequiredLogin,
-			Message: handle.CodeRequiredLoginMsg,
+	var err1 = json.Unmarshal([]byte(str), &userMeta)
+	if err1 != nil {
+		err = errors.NewCommonError(errors.CodeUnLoginError)
+		c.JSON(http.StatusOK, rsp.CommonResp{
+			Code:    err.Code(),
+			Message: err.Error(),
 			Data:    make([]interface{}, 0),
 		})
 		c.Abort()

@@ -57,23 +57,22 @@ const (
 	UserLeave = 2
 )
 
-type LiveRoomMessageType int64
-
-const (
-	// 默认文字消息
-	DefaultTextLiveRoomMessage LiveRoomMessageType = 0
-)
-
 type MessageType int64
 
 const (
 	// 默认文字消息
 	DefaultTextMessage MessageType = 0
+	// 图片消息
+	ImageMessage = 1
+	// 文件消息
+	FileMessage = 2
 )
 
 type BizType int64
 
 const (
+	// 直播间会话
 	LiveRoomBizType BizType = 1
-	SessionBizType          = 2
+	// 群聊会话
+	SessionBizType = 2
 )
